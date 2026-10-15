@@ -1,0 +1,45 @@
+{% extends 'store/base.html' %}
+{% block title %}Pay for {{ order.product.name }} | Reelkit{% endblock %}
+{% block content %}
+<div class="max-w-md">
+  <h1 class="font-display font-bold text-3xl tracking-tight">Complete your payment</h1>
+  <p class="mt-3 text-ink/70">{{ order.product.name }}</p>
+  <p class="mt-1 text-2xl font-bold">₹{{ order.amount_rupees|floatformat:0 }}</p>
+
+  <button id="pay-btn" class="mt-6 bg-cobalt text-white font-bold px-6 py-3 rounded-md hover:bg-ink transition-colors">Pay now</button>
+  <p class="mt-3 text-sm text-ink/60">Test mode: no real money is charged.</p>
+</div>
+
+{# Filled in by the Razorpay handler, then submitted to the server for signature verification #}
+<form id="verify-form" method="post" action="{% url 'verify_payment' %}" class="hidden">
+  {% csrf_token %}
+  <input type="hidden" name="razorpay_order_id" id="f-order-id">
+  <input type="hidden" name="razorpay_payment_id" id="f-payment-id">
+  <input type="hidden" name="razorpay_signature" id="f-signature">
+</form>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+  const orderUrl = "{% url 'order_detail' order.pk %}";
+  const options = {
+    key: "{{ razorpay_key_id|escapejs }}",
+    amount: "{{ order.amount_paise }}",
+    currency: "INR",
+    name: "Reelkit",
+    description: "{{ order.product.name|escapejs }}",
+    order_id: "{{ payment.razorpay_order_id|escapejs }}",
+    prefill: { name: "{{ user.username|escapejs }}", email: "{{ user.email|escapejs }}" },
+    theme: { color: "#3A5BFF" },
+    handler: function (res) {
+      document.getElementById('f-order-id').value = res.razorpay_order_id;
+      document.getElementById('f-payment-id').value = res.razorpay_payment_id;
+      document.getElementById('f-signature').value = res.razorpay_signature;
+      document.getElementById('verify-form').submit();
+    },
+    modal: { ondismiss: function () { window.location = orderUrl; } },
+  };
+  const rzp = new Razorpay(options);
+  rzp.on('payment.failed', function () { window.location = orderUrl; });
+  document.getElementById('pay-btn').addEventListener('click', function () { rzp.open(); });
+</script>
+{% endblock %}

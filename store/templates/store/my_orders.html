@@ -5,7 +5,8 @@
 {% if orders %}
 <div class="bg-white rounded-xl border border-ink/10 divide-y divide-ink/10">
   {% for o in orders %}
-  <div class="p-4 flex items-center justify-between gap-4">
+  <a href="{% url 'order_detail' o.pk %}" class="p-4 flex items-center justify-between gap-4 hover:bg-paper">
+  </a>
     <div>
       <p class="font-bold">{{ o.product.name }}</p>
       <p class="text-sm text-ink/60">{{ o.created_at|date:"j M Y, g:i a" }}</p>
