@@ -1,0 +1,12 @@
+{% extends 'store/base.html' %}
+{% block title %}Log in | Reelkit{% endblock %}
+{% block content %}
+<h1 class="font-display font-bold text-3xl tracking-tight mb-6">Log in</h1>
+<div class="max-w-sm">
+  <form method="post" class="space-y-4">{% csrf_token %}
+    {{ form.as_p }}
+    <button class="bg-cobalt text-white font-bold px-6 py-3 rounded-md hover:bg-ink transition-colors">Log in</button>
+  </form>
+  <p class="mt-4 text-sm">New here? <a href="{% url 'signup' %}" class="text-cobalt underline">Create an account</a>.</p>
+</div>
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends 'store/base.html' %}
+{% block title %}{{ product.name }} | Reelkit{% endblock %}
+{% block content %}
+<a href="{% url 'home' %}" class="text-sm text-ink/60 hover:text-cobalt">Back to all templates</a>
+<div class="mt-5 grid gap-8 md:grid-cols-2">
+  <div class="rounded-xl min-h-64 flex items-end p-6" style="background-color: {{ product.accent_color }}">
+    <span class="font-display font-bold text-4xl text-white leading-none">{{ product.name }}</span>
+  </div>
+  <div>
+    <h1 class="font-display font-bold text-3xl tracking-tight">{{ product.name }}</h1>
+    <p class="mt-1 text-ink/70">{{ product.tagline }}</p>
+    <p class="mt-6 max-w-prose leading-relaxed">{{ product.description }}</p>
+    <p class="mt-8 text-3xl font-bold">₹{{ product.price_rupees|floatformat:0 }}</p>
+    {% if user.is_authenticated %}
+      <form method="post" action="{% url 'checkout' product.slug %}" class="mt-4">{% csrf_token %}
+        <button class="bg-cobalt text-white font-bold px-6 py-3 rounded-md hover:bg-ink transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cobalt">Buy now</button>
+      </form>
+    {% else %}
+      <a href="{% url 'login' %}?next={{ request.path }}" class="inline-block mt-4 bg-ink text-white font-bold px-6 py-3 rounded-md hover:bg-cobalt transition-colors">Log in to buy</a>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends 'store/base.html' %}
+{% block content %}
+<section class="mb-12 max-w-2xl">
+  <h1 class="font-display font-bold text-4xl sm:text-5xl leading-tight tracking-tight">Video templates you can drop into your next edit.</h1>
+  <p class="mt-4 text-lg text-ink/70">Title cards, lower thirds and reel layouts. Buy once, download instantly.</p>
+</section>
+
+{% if products %}
+<div class="grid gap-6 sm:grid-cols-2">
+  {% for p in products %}
+  <a href="{{ p.get_absolute_url }}" class="group block bg-white rounded-xl overflow-hidden border border-ink/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-cobalt">
+    <div class="h-44 flex items-end p-5" style="background-color: {{ p.accent_color }}">
+      <span class="font-display font-bold text-3xl text-white leading-none">{{ p.name }}</span>
+    </div>
+    <div class="p-5 flex items-start justify-between gap-4">
+      <p class="text-ink/70">{{ p.tagline }}</p>
+      <p class="font-bold whitespace-nowrap">₹{{ p.price_rupees|floatformat:0 }}</p>
+    </div>
+  </a>
+  {% endfor %}
+</div>
+{% else %}
+<p class="text-ink/70">No products yet. Run <code class="bg-white px-1.5 py-0.5 rounded">python manage.py seed_products</code> to add the demo items.</p>
+{% endif %}
+{% endblock %}

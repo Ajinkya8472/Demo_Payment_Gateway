@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Reelkit{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  {# Tailwind CDN keeps the demo to zero build steps. For the real project, use the Tailwind CLI. #}
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: { extend: {
+        colors: { paper: '#F2F4F8', ink: '#14213D', cobalt: '#3A5BFF' },
+        fontFamily: { display: ['"Bricolage Grotesque"', 'sans-serif'], sans: ['"DM Sans"', 'sans-serif'] },
+      } }
+    }
+  </script>
+</head>
+<body class="bg-paper text-ink font-sans antialiased min-h-screen flex flex-col">
+  <header class="border-b border-ink/10 bg-white">
+    <nav class="max-w-5xl mx-auto px-5 h-16 flex items-center justify-between">
+      <a href="{% url 'home' %}" class="font-display font-bold text-xl tracking-tight">Reelkit</a>
+      <div class="flex items-center gap-5 text-sm">
+        {% if user.is_authenticated %}
+          <a href="{% url 'my_orders' %}" class="hover:text-cobalt focus-visible:outline focus-visible:outline-2 focus-visible:outline-cobalt">My orders</a>
+          <form method="post" action="{% url 'logout' %}">{% csrf_token %}
+            <button class="hover:text-cobalt focus-visible:outline focus-visible:outline-2 focus-visible:outline-cobalt">Log out ({{ user.username }})</button>
+          </form>
+        {% else %}
+          <a href="{% url 'login' %}" class="hover:text-cobalt">Log in</a>
+          <a href="{% url 'signup' %}" class="bg-ink text-white px-4 py-2 rounded-md hover:bg-cobalt transition-colors">Sign up</a>
+        {% endif %}
+      </div>
+    </nav>
+  </header>
+
+  {% if messages %}
+  <div class="max-w-5xl w-full mx-auto px-5 mt-5">
+    {% for message in messages %}
+      <p class="rounded-md bg-white border border-ink/15 px-4 py-3 text-sm">{{ message }}</p>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <main class="flex-1 max-w-5xl w-full mx-auto px-5 py-10">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="border-t border-ink/10 py-6 text-center text-sm text-ink/60">
+    Demo store. Payments run in Razorpay test mode and no real money moves.
+  </footer>
+</body>
+</html>

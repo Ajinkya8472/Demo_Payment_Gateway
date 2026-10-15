@@ -1,0 +1,6 @@
+Django>=5.0
+django-environ
+gunicorn
+whitenoise
+razorpay
+psycopg2-binary
