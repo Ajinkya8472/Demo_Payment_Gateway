@@ -60,11 +60,28 @@ class Order(models.Model):
 
 
 class Payment(models.Model):
-    order = models.OneToOneField(Order, on_delete=models.CASCADE, related_name='payment')
+    class Status(models.TextChoices):
+        CREATED = 'created', 'Created'
+        CAPTURED = 'captured', 'Captured'
+        FAILED = 'failed', 'Failed'
+
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='payments')
     razorpay_order_id = models.CharField(max_length=64, unique=True)
     razorpay_payment_id = models.CharField(max_length=64, blank=True)
     razorpay_signature = models.CharField(max_length=128, blank=True)
+    status = models.CharField(max_length=10, choices=Status.choices, default=Status.CREATED)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+        constraints = [
+            # At most one captured payment per order, enforced by the database.
+            models.UniqueConstraint(
+                fields=['order'],
+                condition=models.Q(status='captured'),
+                name='one_captured_payment_per_order',
+            ),
+        ]
 
     def __str__(self):
         return self.razorpay_order_id
